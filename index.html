@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Structure: List - Interactive Python Presentation</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #130a24;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #200d3b;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .slide-stage {
+      width: 1280px;
+      height: 720px;
+      margin: 0 auto;
+      overflow: hidden;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-panel {
+      width: 1280px;
+      height: 720px;
+      padding: 44px 56px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    .slide-panel.active {
+      display: flex;
+    }
+
+    .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .font-code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .btn-interactive {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+    }
+    .btn-interactive:hover {
+      transform: translateY(-3px) scale(1.02);
+    }
+    .btn-interactive:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .card-hover {
+      transition: all 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(147, 51, 234, 0.25);
+    }
+
+    .code-box {
+      background: #1e1035;
+      border-radius: 18px;
+      padding: 20px;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-bar {
+      width: 1280px;
+      margin: 14px auto 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .nav-btn {
+      background: #2e1a52;
+      color: #facc15;
+      border: 2px solid #a855f7;
+      padding: 10px 24px;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: #a855f7;
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .dot-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #331f52;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .dot-indicator.active {
+      background: #facc15;
+      width: 24px;
+      border-radius: 10px;
+    }
+
+    .quiz-chip {
+      background: #ffffff;
+      border: 2px solid #e9d5ff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #200d3b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quiz-chip:hover {
+      border-color: #9333ea;
+      background: #faf5ff;
+    }
+    .quiz-chip.selected-correct {
+      background: #f0fdf4 !important;
+      border-color: #22c55e !important;
+      color: #14532d !important;
+    }
+    .quiz-chip.selected-wrong {
+      background: #fef2f2 !important;
+      border-color: #ef4444 !important;
+      color: #7f1d1d !important;
+    }
+
+    .drag-item {
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .drag-item:active {
+      cursor: grabbing;
+      transform: scale(1.05);
+    }
+    .drop-slot {
+      border: 3px dashed #c084fc;
+      border-radius: 16px;
+      background: #faf5ff;
+      transition: all 0.2s ease;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .drop-slot.drag-over {
+      border-color: #facc15 !important;
+      background: #fef08a !important;
+      transform: scale(1.03);
+    }
+
+    .checkbox-card {
+      background: #ffffff;
+      border: 2px solid #e9d5ff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .checkbox-card:hover {
+      border-color: #9333ea;
+      background: #faf5ff;
+    }
+    .checkbox-card.checked {
+      background: #f0fdf4;
+      border-color: #22c55e;
+    }
+    .checkbox-box {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #a855f7;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .checkbox-card.checked .checkbox-box {
+      background: #22c55e;
+      border-color: #22c55e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MAIN SLIDE STAGE -->
+  <div class="slide-stage">
+
+    <div class="slide-panel active" id="slide-1" style="background: #23123d; justify-content: center; align-items: center; text-align: center;">
+      <div style="background: #facc15; color: #23123d; padding: 10px 28px; border-radius: 999px; font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; letter-spacing: 1px;">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>PYTHON DATA STRUCTURES</span>
+      </div>
+
+      <h1 class="font-fredoka" style="font-size: 64px; font-weight: 700; color: #ffffff; margin-bottom: 32px; line-height: 1.15; max-width: 920px;">
+        Data Structure: <span style="color: #facc15; text-decoration: underline; text-decoration-color: #a855f7;">List</span>
+      </h1>
+
+      <button onclick="nextSlide()" class="btn-interactive font-fredoka" style="background: #facc15; color: #23123d; border: none; padding: 18px 48px; border-radius: 20px; font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 14px; box-shadow: 0 12px 28px rgba(250, 204, 21, 0.35);">
+        <span>Start Exploring</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <div class="slide-panel" id="slide-2" style="background: #faf5ff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">REAL-WORLD ANALOGY</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Let's Create a Shopping List Together!</h2>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; gap: 32px; align-items: center; margin: 16px 0;">
+        <div style="flex: 1.1 1 0; display: flex; flex-direction: column; gap: 12px;">
+          <p style="font-size: 18px; font-weight: 700; color: #6b21a8;">
+            Click to add items to your shopping list:
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button onclick="addShoppingItem('Milk 🥛')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Milk 🥛</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+
+            <button onclick="addShoppingItem('Apples 🍎')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Apples 🍎</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+
+            <button onclick="addShoppingItem('Bread 🍞')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Bread 🍞</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+
+            <button onclick="addShoppingItem('Eggs 🥚')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Eggs 🥚</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+
+            <button onclick="addShoppingItem('Cookies 🍪')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Cookies 🍪</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+
+            <button onclick="addShoppingItem('Juice 🧃')" class="btn-interactive card-hover" style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 16px; padding: 14px 18px; font-size: 18px; font-weight: 700; color: #200d3b; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+              <span>Juice 🧃</span>
+              <i class="fa-solid fa-plus-circle" style="color: #a855f7;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="flex: 1 1 0; background: #ffffff; border: 3px solid #c084fc; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid #f3e8ff; padding-bottom: 8px;">
+              <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">Your Shopping List</h3>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span id="shop-count-badge" style="background: #f3e8ff; color: #7c3aed; padding: 4px 12px; border-radius: 12px; font-weight: 800; font-size: 16px;">0 items</span>
+                <button onclick="clearShoppingList()" class="btn-interactive font-fredoka" style="background: #fee2e2; border: 2px solid #ef4444; color: #991b1b; padding: 4px 12px; border-radius: 12px; font-size: 14px; font-weight: 700;">
+                  Clear List
+                </button>
+              </div>
+            </div>
+
+            <div id="shopping-paper-container" style="display: flex; flex-wrap: wrap; gap: 10px; min-height: 140px; align-content: flex-start; background: #faf5ff; padding: 16px; border-radius: 16px;">
+              <span style="color: #a855f7; font-size: 18px; font-style: italic;">List is empty! Click items on the left to add...</span>
+            </div>
+          </div>
+
+          <button onclick="submitShoppingList()" class="btn-interactive font-fredoka" style="background: #22c55e; color: #ffffff; border: none; padding: 14px; border-radius: 16px; font-size: 20px; font-weight: 700; width: 100%;">
+            Submit Shopping List
+          </button>
+        </div>
+      </div>
+
+      <div id="shop-reflection-banner" style="background: #fef08a; border: 2px solid #eab308; padding: 16px 20px; border-radius: 18px; display: none; align-items: center; gap: 16px;">
+        <i class="fa-solid fa-lightbulb" style="font-size: 32px; color: #ca8a04;"></i>
+        <p style="font-size: 18px; color: #713f12; font-weight: 700; line-height: 1.3;">
+          Note: You did NOT need separate sheets of paper for each item — you used the <b>same paper</b>! In Python, we do not need multiple variables (<code class="font-code">item1</code>, <code class="font-code">item2</code>...), we need <b>just ONE List</b>!
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-3" style="background: #ffffff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">SYNTAX & CODE BUILDER</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">How Do We Create a List in Python?</h2>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; gap: 28px; align-items: center; margin: 16px 0;">
+        <div style="flex: 1.1 1 0; background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+          <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">Enter the names of 5 friends:</h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="friend-1" value="Alex" placeholder="Friend 1" style="padding: 10px 14px; border-radius: 12px; border: 2px solid #ddd6fe; font-size: 16px; font-weight: 600; outline: none;">
+            <input type="text" id="friend-2" value="Sam" placeholder="Friend 2" style="padding: 10px 14px; border-radius: 12px; border: 2px solid #ddd6fe; font-size: 16px; font-weight: 600; outline: none;">
+            <input type="text" id="friend-3" value="Maya" placeholder="Friend 3" style="padding: 10px 14px; border-radius: 12px; border: 2px solid #ddd6fe; font-size: 16px; font-weight: 600; outline: none;">
+            <input type="text" id="friend-4" value="Leo" placeholder="Friend 4" style="padding: 10px 14px; border-radius: 12px; border: 2px solid #ddd6fe; font-size: 16px; font-weight: 600; outline: none;">
+            <input type="text" id="friend-5" value="Zoe" placeholder="Friend 5" style="padding: 10px 14px; border-radius: 12px; border: 2px solid #ddd6fe; font-size: 16px; font-weight: 600; outline: none;">
+          </div>
+
+          <button onclick="buildFriendListCode()" class="btn-interactive font-fredoka" style="background: #9333ea; color: #ffffff; border: none; padding: 14px; border-radius: 14px; font-size: 18px; font-weight: 700; margin-top: 6px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-code"></i>
+            <span>Build List Code</span>
+          </button>
+        </div>
+
+        <div style="flex: 1.2 1 0; display: flex; flex-direction: column; gap: 16px;">
+          <div class="code-box">
+            <div style="font-size: 14px; color: #facc15; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Generated Python Code:</div>
+            <pre id="built-code-display" class="font-code" style="font-size: 20px; color: #4ade80; line-height: 1.5; white-space: pre-wrap;">friends = ["Alex", "Sam", "Maya", "Leo", "Zoe"]
+print(friends)</pre>
+          </div>
+
+          <div style="background: #0f172a; border-radius: 18px; padding: 20px; color: #ffffff;">
+            <div style="font-size: 14px; color: #38bdf8; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"><i class="fa-solid fa-terminal"></i> Terminal Output:</div>
+            <div id="built-terminal-output" class="font-code" style="font-size: 20px; color: #facc15;">
+              ['Alex', 'Sam', 'Maya', 'Leo', 'Zoe']
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-4" style="background: #faf5ff;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">ACTIVITY 1</span>
+          <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Coding Time: Creating Your Favorite Lists</h2>
+        </div>
+        <div style="background: #facc15; color: #200d3b; padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 18px;">
+          3 Programs Challenge
+        </div>
+      </div>
+
+      <p style="font-size: 20px; color: #6b21a8; font-weight: 600; margin: 12px 0;">
+        Open your CodeHS Sandbox, complete these 3 programs, then mark the checkboxes below:
+      </p>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; justify-content: center; margin: 12px 0;">
+        <div class="checkbox-card" id="task-card-1" onclick="toggleTaskCheckbox('task-card-1')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">1. Favorite Fruits List 🍎</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list named <code class="font-code">fruits</code> containing 5 fruit names and print it.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="task-card-2" onclick="toggleTaskCheckbox('task-card-2')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">2. Favorite Birds List 🐦</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list named <code class="font-code">birds</code> containing 5 bird names and print it.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="task-card-3" onclick="toggleTaskCheckbox('task-card-3')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">3. Favorite Video Games List 🎮</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list named <code class="font-code">games</code> containing 5 video game titles and print it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="sandbox-feedback-1" style="background: #ffffff; border: 2px dashed #a855f7; padding: 14px; border-radius: 16px; font-size: 18px; color: #7c3aed; font-weight: 700; text-align: center;">
+        Check off all 3 tasks as you complete them in CodeHS Sandbox!
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-5" style="background: #ffffff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">INDEX EXPLORER</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">What if we want to print each element separately?</h2>
+      </div>
+
+      <p style="font-size: 18px; color: #6b21a8; font-weight: 600; margin: 8px 0;">
+        Drag items into the slots below to discover their Index numbers:
+      </p>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-around; margin: 12px 0;">
+        <div style="display: flex; gap: 16px; justify-content: center; background: #faf5ff; padding: 16px; border-radius: 18px; border: 2px solid #e9d5ff;" id="drag-items-pool">
+          <div draggable="true" ondragstart="handleIndexDragStart(event, '🍎 Apple')" class="drag-item btn-interactive" style="background: #ffffff; border: 2px solid #a855f7; padding: 12px 24px; border-radius: 14px; font-size: 20px; font-weight: 800; color: #200d3b;">
+            🍎 Apple
+          </div>
+          <div draggable="true" ondragstart="handleIndexDragStart(event, '🍌 Banana')" class="drag-item btn-interactive" style="background: #ffffff; border: 2px solid #a855f7; padding: 12px 24px; border-radius: 14px; font-size: 20px; font-weight: 800; color: #200d3b;">
+            🍌 Banana
+          </div>
+          <div draggable="true" ondragstart="handleIndexDragStart(event, '🍒 Cherry')" class="drag-item btn-interactive" style="background: #ffffff; border: 2px solid #a855f7; padding: 12px 24px; border-radius: 14px; font-size: 20px; font-weight: 800; color: #200d3b;">
+            🍒 Cherry
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <div class="drop-slot" ondragover="handleIndexDragOver(event)" ondragleave="handleIndexDragLeave(event)" ondrop="handleIndexDrop(event, 0)">
+            <span style="font-size: 14px; font-weight: 800; color: #9333ea; text-transform: uppercase;">POSITION 1</span>
+            <div class="slot-content font-fredoka" style="font-size: 22px; color: #200d3b; font-weight: 700;">Drop Here!</div>
+            <span class="font-code index-reveal-tag" style="background: #facc15; color: #200d3b; padding: 2px 10px; border-radius: 8px; font-weight: 800; font-size: 16px; margin-top: 4px; display: none;">Index [0]</span>
+          </div>
+
+          <div class="drop-slot" ondragover="handleIndexDragOver(event)" ondragleave="handleIndexDragLeave(event)" ondrop="handleIndexDrop(event, 1)">
+            <span style="font-size: 14px; font-weight: 800; color: #9333ea; text-transform: uppercase;">POSITION 2</span>
+            <div class="slot-content font-fredoka" style="font-size: 22px; color: #200d3b; font-weight: 700;">Drop Here!</div>
+            <span class="font-code index-reveal-tag" style="background: #facc15; color: #200d3b; padding: 2px 10px; border-radius: 8px; font-weight: 800; font-size: 16px; margin-top: 4px; display: none;">Index [1]</span>
+          </div>
+
+          <div class="drop-slot" ondragover="handleIndexDragOver(event)" ondragleave="handleIndexDragLeave(event)" ondrop="handleIndexDrop(event, 2)">
+            <span style="font-size: 14px; font-weight: 800; color: #9333ea; text-transform: uppercase;">POSITION 3</span>
+            <div class="slot-content font-fredoka" style="font-size: 22px; color: #200d3b; font-weight: 700;">Drop Here!</div>
+            <span class="font-code index-reveal-tag" style="background: #facc15; color: #200d3b; padding: 2px 10px; border-radius: 8px; font-weight: 800; font-size: 16px; margin-top: 4px; display: none;">Index [2]</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #f0fdf4; border: 2px solid #22c55e; padding: 14px 20px; border-radius: 16px; font-size: 18px; color: #14532d; font-weight: 700; text-align: center;">
+        Note: Python starts counting list positions from ZERO! Position 1 is at <b>Index 0</b>!
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-6" style="background: #faf5ff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">INDEX VERIFICATION</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Accessing Specific Elements by Index</h2>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; gap: 32px; align-items: center; margin: 16px 0;">
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 16px;">
+          <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 16px;">
+            <div style="background: #facc15; color: #200d3b; width: 44px; height: 44px; border-radius: 12px; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center;">1</div>
+            <div>
+              <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">1st Element position</h3>
+              <p style="font-size: 18px; color: #6b21a8; font-weight: 700;">Located at Index <code class="font-code">[0]</code></p>
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 16px;">
+            <div style="background: #facc15; color: #200d3b; width: 44px; height: 44px; border-radius: 12px; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center;">2</div>
+            <div>
+              <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">2nd Element position</h3>
+              <p style="font-size: 18px; color: #6b21a8; font-weight: 700;">Located at Index <code class="font-code">[1]</code></p>
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 16px;">
+            <div style="background: #facc15; color: #200d3b; width: 44px; height: 44px; border-radius: 12px; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center;">3</div>
+            <div>
+              <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">3rd Element position</h3>
+              <p style="font-size: 18px; color: #6b21a8; font-weight: 700;">Located at Index <code class="font-code">[2]</code></p>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 1.2 1 0; background: #ffffff; border: 3px solid #c084fc; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 class="font-fredoka" style="font-size: 24px; color: #200d3b; margin-bottom: 12px;">Interactive Code Tester:</h3>
+            <div class="font-code" style="background: #1e1035; color: #ffffff; padding: 16px; border-radius: 14px; font-size: 18px; margin-bottom: 16px;">
+              colors = ["Red", "Blue", "Green"]
+            </div>
+
+            <p style="font-size: 18px; font-weight: 700; color: #6b21a8; margin-bottom: 10px;">Click to print specific element:</p>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+              <button onclick="testIndexPrint(0, 'Red')" class="btn-interactive font-code" style="background: #f3e8ff; border: 2px solid #a855f7; color: #200d3b; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 16px;">print(colors[0])</button>
+              <button onclick="testIndexPrint(1, 'Blue')" class="btn-interactive font-code" style="background: #f3e8ff; border: 2px solid #a855f7; color: #200d3b; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 16px;">print(colors[1])</button>
+              <button onclick="testIndexPrint(2, 'Green')" class="btn-interactive font-code" style="background: #f3e8ff; border: 2px solid #a855f7; color: #200d3b; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 16px;">print(colors[2])</button>
+            </div>
+          </div>
+
+          <div style="background: #0f172a; padding: 16px; border-radius: 14px; color: #ffffff;">
+            <div style="font-size: 14px; color: #38bdf8; font-weight: 700; text-transform: uppercase;">Output:</div>
+            <div id="index-test-output" class="font-code" style="font-size: 24px; color: #4ade80; font-weight: 700; margin-top: 4px;">
+              Click a button above!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-7" style="background: #ffffff;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">ACTIVITY 2</span>
+          <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Index Activity</h2>
+        </div>
+        <div style="background: #facc15; color: #200d3b; padding: 8px 18px; border-radius: 12px; font-weight: 800; font-size: 16px;">
+          Knowledge Check
+        </div>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center; margin: 16px 0;">
+        <div style="background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 18px;">
+          <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b; margin-bottom: 10px;">1. What is the index number of the FIRST element in a Python list?</h3>
+          <div style="display: flex; gap: 12px;">
+            <button onclick="checkQuiz1NoConfetti(this, false)" class="quiz-chip" style="flex: 1;">Index 1</button>
+            <button onclick="checkQuiz1NoConfetti(this, true)" class="quiz-chip" style="flex: 1;">Index 0</button>
+            <button onclick="checkQuiz1NoConfetti(this, false)" class="quiz-chip" style="flex: 1;">Index -1</button>
+          </div>
+        </div>
+
+        <div style="background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 18px;">
+          <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b; margin-bottom: 10px;">2. In a list with 5 items, what is the index of the LAST element?</h3>
+          <div style="display: flex; gap: 12px;">
+            <button onclick="checkQuiz2NoConfetti(this, false)" class="quiz-chip" style="flex: 1;">Index 5</button>
+            <button onclick="checkQuiz2NoConfetti(this, true)" class="quiz-chip" style="flex: 1;">Index 4</button>
+            <button onclick="checkQuiz2NoConfetti(this, false)" class="quiz-chip" style="flex: 1;">Index 0</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quiz-feedback-banner" style="background: #faf5ff; border: 2px dashed #a855f7; padding: 12px; border-radius: 14px; font-size: 18px; color: #7c3aed; font-weight: 700; text-align: center;">
+        Select your answers above!
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-8" style="background: #faf5ff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">MATH WITH LISTS</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">How to Do Math with Lists</h2>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; gap: 28px; align-items: center; margin: 16px 0;">
+        <div style="flex: 1.1 1 0; background: #ffffff; border: 3px solid #e9d5ff; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b; margin-bottom: 12px;">Number List Creation:</h3>
+            <div class="font-code" style="background: #1e1035; color: #ffffff; padding: 18px; border-radius: 16px; font-size: 20px; margin-bottom: 16px;">
+              numbers = [10, 20, 30, 40, 50]
+            </div>
+
+            <p style="font-size: 18px; font-weight: 700; color: #6b21a8; margin-bottom: 10px;">Click actions to test:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <button onclick="runNumDemo('print(numbers[0])', '10')" class="btn-interactive font-code" style="background: #f3e8ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: left;">1. Print 1st number: print(numbers[0])</button>
+              <button onclick="runNumDemo('print(numbers[1])', '20')" class="btn-interactive font-code" style="background: #f3e8ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: left;">2. Print 2nd number: print(numbers[1])</button>
+              <button onclick="runNumDemo('total = numbers[0] + numbers[1]\nprint(total)', '30')" class="btn-interactive font-code" style="background: #fef08a; border: 2px solid #ca8a04; padding: 10px 14px; border-radius: 12px; font-size: 16px; font-weight: 800; text-align: left; color: #713f12;">3. Add numbers[0] + numbers[1]</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 16px;">
+          <div style="background: #0f172a; padding: 20px; border-radius: 20px; color: #ffffff;">
+            <div style="font-size: 14px; color: #38bdf8; font-weight: 700; text-transform: uppercase;">Code Output:</div>
+            <div id="num-demo-output" class="font-code" style="font-size: 28px; color: #facc15; font-weight: 800; margin-top: 6px;">
+              Click an action on the left!
+            </div>
+          </div>
+
+          <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 20px; padding: 20px;">
+            <h4 class="font-fredoka" style="font-size: 20px; color: #14532d; margin-bottom: 6px;">Explanation:</h4>
+            <p style="font-size: 18px; color: #15803d; line-height: 1.4;">
+              Since <code class="font-code">numbers[0]</code> is <b>10</b> and <code class="font-code">numbers[1]</code> is <b>20</b>, adding them together (<code class="font-code">numbers[0] + numbers[1]</code>) gives <b>30</b>!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-9" style="background: #ffffff;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">ACTIVITY 3</span>
+          <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Math Challenges Checklist</h2>
+        </div>
+        <div style="background: #facc15; color: #200d3b; padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 18px;">
+          3 Math Tasks
+        </div>
+      </div>
+
+      <p style="font-size: 20px; color: #6b21a8; font-weight: 600; margin: 12px 0;">
+        Complete these 3 math challenges in your CodeHS Sandbox editor:
+      </p>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; justify-content: center; margin: 12px 0;">
+        <div class="checkbox-card" id="math-task-card-1" onclick="toggleTaskCheckbox('math-task-card-1')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">1. Sum of 3 Numbers</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list of 3 numbers, add all 3 numbers together using index numbers, and print the total.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="math-task-card-2" onclick="toggleTaskCheckbox('math-task-card-2')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">2. Add 1st, 2nd, and 5th Numbers</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list of 5 numbers and add the 1st (<code class="font-code">[0]</code>), 2nd (<code class="font-code">[1]</code>), and 5th (<code class="font-code">[4]</code>) numbers together.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="math-task-card-3" onclick="toggleTaskCheckbox('math-task-card-3')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 22px; color: #200d3b;">3. Subtract Numbers</h3>
+            <p style="font-size: 18px; color: #6b21a8;">Create a list of 4 numbers and subtract the 1st number (<code class="font-code">[0]</code>) from the 4th number (<code class="font-code">[3]</code>).</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #faf5ff; border: 2px dashed #a855f7; padding: 14px; border-radius: 16px; font-size: 18px; color: #7c3aed; font-weight: 700; text-align: center;">
+        Check off each task as you complete it in CodeHS Sandbox!
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-10" style="background: #ffffff;">
+      <div>
+        <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">METHODS & SLICING</span>
+        <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Mastering List Functions & Slicing</h2>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; gap: 24px; align-items: stretch; margin: 16px 0;">
+        <div style="flex: 1.1 1 0; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+          <p style="font-size: 15px; font-weight: 700; color: #6b21a8;">Click a function to test on the list:</p>
+
+          <button onclick="runMethodLab('append')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            fruits.append("Cherry")
+          </button>
+
+          <button onclick="runMethodLab('extend')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            fruits.extend(["Grape", "Mango"])
+          </button>
+
+          <button onclick="runMethodLab('remove')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            fruits.remove("Banana")
+          </button>
+
+          <button onclick="runMethodLab('pop')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            fruits.pop()
+          </button>
+
+          <button onclick="runMethodLab('concat')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            fruits + ["Kiwi"]
+          </button>
+
+          <button onclick="runMethodLab('len')" class="btn-interactive font-code" style="background: #faf5ff; border: 2px solid #a855f7; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; text-align: left; color: #200d3b;">
+            len(fruits)
+          </button>
+
+          <div style="background: #fef08a; border: 2px solid #ca8a04; padding: 8px 12px; border-radius: 12px; display: flex; align-items: center; gap: 8px;">
+            <span class="font-code" style="font-weight: 700; font-size: 14px; color: #713f12;">Slice: fruits[</span>
+            <input type="number" id="slice-start" value="0" min="0" max="5" style="width: 40px; padding: 2px 4px; font-size: 14px; font-weight: 700; border-radius: 6px; border: 1px solid #ca8a04;">
+            <span class="font-code" style="font-weight: 700; font-size: 14px; color: #713f12;">:</span>
+            <input type="number" id="slice-end" value="2" min="0" max="5" style="width: 40px; padding: 2px 4px; font-size: 14px; font-weight: 700; border-radius: 6px; border: 1px solid #ca8a04;">
+            <span class="font-code" style="font-weight: 700; font-size: 14px; color: #713f12;">]</span>
+            <button onclick="runSliceDemo()" class="btn-interactive font-fredoka" style="background: #ca8a04; color: #ffffff; border: none; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 700;">Test</button>
+          </div>
+
+          <button onclick="resetMethodLab()" class="btn-interactive font-fredoka" style="background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: 700; margin-top: 2px;">
+            Reset List
+          </button>
+        </div>
+
+        <div style="flex: 1.2 1 0; background: #faf5ff; border: 3px solid #c084fc; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span style="font-size: 14px; font-weight: 800; color: #9333ea; text-transform: uppercase;">CURRENT LIVE LIST:</span>
+            <div id="live-list-display" class="font-code" style="background: #1e1035; color: #4ade80; padding: 18px; border-radius: 16px; font-size: 20px; font-weight: 700; margin: 12px 0; word-break: break-all;">
+              ["Apple", "Banana"]
+            </div>
+
+            <div id="method-action-description" style="background: #ffffff; border: 2px solid #e9d5ff; padding: 14px; border-radius: 14px; font-size: 16px; color: #6b21a8; font-weight: 600;">
+              Click any method or slice button on the left to observe how the list changes!
+            </div>
+          </div>
+
+          <div style="background: #f0fdf4; border: 1px solid #22c55e; padding: 12px; border-radius: 12px; text-align: center; font-size: 15px; font-weight: 700; color: #15803d;">
+            Try these in your CodeHS Sandbox editor!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-11" style="background: #faf5ff;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">ACTIVITY 4</span>
+          <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Methods & Slicing Checklist</h2>
+        </div>
+        <div style="background: #facc15; color: #200d3b; padding: 8px 18px; border-radius: 12px; font-weight: 800; font-size: 16px;">
+          Practice Tasks
+        </div>
+      </div>
+
+      <p style="font-size: 20px; color: #6b21a8; font-weight: 600; margin: 12px 0;">
+        Practice list methods and slicing in your CodeHS Sandbox editor:
+      </p>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center; margin: 12px 0;">
+        <div class="checkbox-card" id="method-task-card-1" onclick="toggleTaskCheckbox('method-task-card-1')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">1. Append an Item</h3>
+            <p style="font-size: 17px; color: #6b21a8;">Create a list and use <code class="font-code">append()</code> to add one new element at the end.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="method-task-card-2" onclick="toggleTaskCheckbox('method-task-card-2')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">2. Extend List & Concatenate</h3>
+            <p style="font-size: 17px; color: #6b21a8;">Use <code class="font-code">extend()</code> or <code class="font-code">+</code> to combine multiple items into your list.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="method-task-card-3" onclick="toggleTaskCheckbox('method-task-card-3')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">3. Remove & Pop Elements</h3>
+            <p style="font-size: 17px; color: #6b21a8;">Delete an item using <code class="font-code">remove()</code> and remove the last item using <code class="font-code">pop()</code>.</p>
+          </div>
+        </div>
+
+        <div class="checkbox-card" id="method-task-card-4" onclick="toggleTaskCheckbox('method-task-card-4')">
+          <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h3 class="font-fredoka" style="font-size: 20px; color: #200d3b;">4. Slice Your List</h3>
+            <p style="font-size: 17px; color: #6b21a8;">Use colons to print a slice of your list (for example, <code class="font-code">my_list[0:2]</code>).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-12" style="background: #faf5ff;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="font-fredoka" style="font-size: 18px; color: #9333ea; font-weight: 600; letter-spacing: 1px;">ACTIVITY 5</span>
+          <h2 class="font-fredoka" style="font-size: 38px; color: #200d3b; margin-top: 4px;">Methods & Slicing Quiz</h2>
+        </div>
+        <div style="background: #facc15; color: #200d3b; padding: 8px 18px; border-radius: 12px; font-weight: 800; font-size: 16px;">
+          Knowledge Check
+        </div>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center; margin: 16px 0;">
+        <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 16px;">
+          <h3 class="font-fredoka" style="font-size: 18px; color: #200d3b; margin-bottom: 8px;">1. If <code class="font-code">items = ["A", "B"]</code>, what happens after <code class="font-code">items.append("C")</code>?</h3>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="checkMethodQuizNoConfetti(this, true)" class="quiz-chip" style="flex: 1; font-size: 16px;">['A', 'B', 'C']</button>
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">['C', 'A', 'B']</button>
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">['A', 'B']</button>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 16px;">
+          <h3 class="font-fredoka" style="font-size: 18px; color: #200d3b; margin-bottom: 8px;">2. Which function removes the VERY LAST element from a list?</h3>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">remove()</button>
+            <button onclick="checkMethodQuizNoConfetti(this, true)" class="quiz-chip" style="flex: 1; font-size: 16px;">pop()</button>
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">split()</button>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 2px solid #e9d5ff; border-radius: 18px; padding: 16px;">
+          <h3 class="font-fredoka" style="font-size: 18px; color: #200d3b; margin-bottom: 8px;">3. What does <code class="font-code">len(["X", "Y", "Z"])</code> return?</h3>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">2</button>
+            <button onclick="checkMethodQuizNoConfetti(this, true)" class="quiz-chip" style="flex: 1; font-size: 16px;">3</button>
+            <button onclick="checkMethodQuizNoConfetti(this, false)" class="quiz-chip" style="flex: 1; font-size: 16px;">0</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-quiz-feedback" style="background: #ffffff; border: 2px dashed #a855f7; padding: 12px; border-radius: 14px; font-size: 18px; color: #7c3aed; font-weight: 700; text-align: center;">
+        Select your answers above!
+      </div>
+    </div>
+
+    <div class="slide-panel" id="slide-13" style="background: #23123d; justify-content: center; align-items: center; text-align: center;">
+      <div style="background: #facc15; color: #23123d; width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 40px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(250, 204, 21, 0.4);">
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+
+      <span style="font-size: 18px; color: #facc15; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">NEXT CLASS PREVIEW</span>
+
+      <h1 class="font-fredoka" style="font-size: 52px; font-weight: 700; color: #ffffff; margin-bottom: 16px;">
+        Loops and Lists!
+      </h1>
+
+      <p style="font-size: 22px; color: #e9d5ff; max-width: 760px; margin-bottom: 36px; line-height: 1.4;">
+        In our next class, we will learn how to combine <code class="font-code" style="color: #facc15;">for</code> loops with lists to automate processing multiple items automatically!
+      </p>
+
+      <div style="background: rgba(255,255,255,0.06); border: 2px dashed #a855f7; border-radius: 20px; padding: 20px 36px; display: flex; gap: 32px; justify-content: center;">
+        <div style="color: #facc15; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-check-circle"></i> <span>List Creation</span>
+        </div>
+        <div style="color: #facc15; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-check-circle"></i> <span>Zero-based Indexing</span>
+        </div>
+        <div style="color: #facc15; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-check-circle"></i> <span>Methods & Slicing</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAVIGATION CONTROL BAR -->
+  <div class="nav-bar">
+    <button id="prev-btn" class="nav-btn" onclick="prevSlide()" disabled>
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Previous</span>
+    </button>
+
+    <div style="display: flex; gap: 8px;" id="dots-container">
+      <!-- Generated in JS -->
+    </div>
+
+    <button id="next-btn" class="nav-btn" onclick="nextSlide()">
+      <span>Next</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- JAVASCRIPT CONTROLLERS -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 13;
+
+    /* Web Audio Synthesizer */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'pop') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(380, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(760, audioCtx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.08);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+          osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        }
+      } catch (e) {
+        console.log('Audio error', e);
+      }
+    }
+
+    function initDots() {
+      const dotsContainer = document.getElementById('dots-container');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot-indicator ${i === 1 ? 'active' : ''}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide-panel').forEach((panel, idx) => {
+        panel.classList.remove('active');
+        if (idx + 1 === currentSlide) {
+          panel.classList.add('active');
+        }
+      });
+
+      const dots = document.querySelectorAll('.dot-indicator');
+      dots.forEach((dot, idx) => {
+        if (idx + 1 === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      document.getElementById('prev-btn').disabled = currentSlide === 1;
+      document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+    }
+
+    function goToSlide(slideNum) {
+      if (slideNum >= 1 && slideNum <= totalSlides) {
+        currentSlide = slideNum;
+        playSound('pop');
+        updateSlideDisplay();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) goToSlide(currentSlide - 1);
+    }
+
+    const shoppingItems = [];
+    function addShoppingItem(item) {
+      playSound('pop');
+      if (!shoppingItems.includes(item)) {
+        shoppingItems.push(item);
+      }
+      renderShoppingPaper();
+    }
+
+    function clearShoppingList() {
+      playSound('pop');
+      shoppingItems.length = 0;
+      renderShoppingPaper();
+      document.getElementById('shop-reflection-banner').style.display = 'none';
+    }
+
+    function renderShoppingPaper() {
+      const container = document.getElementById('shopping-paper-container');
+      const countBadge = document.getElementById('shop-count-badge');
+      if (shoppingItems.length === 0) {
+        container.innerHTML = '<span style="color: #a855f7; font-size: 18px; font-style: italic;">List is empty! Click items on the left to add...</span>';
+        countBadge.innerText = '0 items';
+      } else {
+        container.innerHTML = '';
+        shoppingItems.forEach(item => {
+          const tag = document.createElement('span');
+          tag.style.cssText = 'background: #f3e8ff; border: 2px solid #a855f7; color: #200d3b; padding: 6px 14px; border-radius: 12px; font-size: 18px; font-weight: 700;';
+          tag.innerText = item;
+          container.appendChild(tag);
+        });
+        countBadge.innerText = `${shoppingItems.length} items`;
+      }
+    }
+
+    function submitShoppingList() {
+      if (shoppingItems.length === 0) {
+        playSound('wrong');
+        return;
+      }
+      playSound('correct');
+      const banner = document.getElementById('shop-reflection-banner');
+      banner.style.display = 'flex';
+    }
+
+    function buildFriendListCode() {
+      playSound('correct');
+      const f1 = document.getElementById('friend-1').value.trim() || 'Alex';
+      const f2 = document.getElementById('friend-2').value.trim() || 'Sam';
+      const f3 = document.getElementById('friend-3').value.trim() || 'Maya';
+      const f4 = document.getElementById('friend-4').value.trim() || 'Leo';
+      const f5 = document.getElementById('friend-5').value.trim() || 'Zoe';
+
+      const codeDisp = document.getElementById('built-code-display');
+      const termDisp = document.getElementById('built-terminal-output');
+
+      codeDisp.innerText = `friends = ["${f1}", "${f2}", "${f3}", "${f4}", "${f5}"]\nprint(friends)`;
+      termDisp.innerText = `['${f1}', '${f2}', '${f3}', '${f4}', '${f5}']`;
+    }
+
+    function toggleTaskCheckbox(cardId) {
+      playSound('pop');
+      const card = document.getElementById(cardId);
+      card.classList.toggle('checked');
+    }
+
+    let draggedText = '';
+    function handleIndexDragStart(e, text) {
+      draggedText = text;
+      e.dataTransfer.setData('text/plain', text);
+    }
+    function handleIndexDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    function handleIndexDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+    function handleIndexDrop(e, indexNum) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      playSound('correct');
+      const content = e.currentTarget.querySelector('.slot-content');
+      const indexTag = e.currentTarget.querySelector('.index-reveal-tag');
+      
+      content.innerText = draggedText;
+      content.style.color = '#15803d';
+      
+      if (indexTag) {
+        indexTag.style.display = 'inline-block';
+      }
+    }
+
+    function testIndexPrint(idx, val) {
+      playSound('pop');
+      const out = document.getElementById('index-test-output');
+      out.innerText = `> ${val}`;
+    }
+
+    function checkQuiz1NoConfetti(btn, isCorrect) {
+      if (isCorrect) {
+        playSound('correct');
+        btn.classList.add('selected-correct');
+      } else {
+        playSound('wrong');
+        btn.classList.add('selected-wrong');
+      }
+    }
+    function checkQuiz2NoConfetti(btn, isCorrect) {
+      if (isCorrect) {
+        playSound('correct');
+        btn.classList.add('selected-correct');
+      } else {
+        playSound('wrong');
+        btn.classList.add('selected-wrong');
+      }
+    }
+    function checkMethodQuizNoConfetti(btn, isCorrect) {
+      if (isCorrect) {
+        playSound('correct');
+        btn.classList.add('selected-correct');
+      } else {
+        playSound('wrong');
+        btn.classList.add('selected-wrong');
+      }
+    }
+
+    function runNumDemo(cmd, output) {
+      playSound('correct');
+      const out = document.getElementById('num-demo-output');
+      out.innerText = `> ${output}`;
+    }
+
+    let liveList = ["Apple", "Banana"];
+    function renderMethodLab(msg) {
+      document.getElementById('live-list-display').innerText = JSON.stringify(liveList);
+      document.getElementById('method-action-description').innerText = msg;
+    }
+    function runMethodLab(method) {
+      playSound('correct');
+      if (method === 'append') {
+        liveList.push("Cherry");
+        renderMethodLab('fruits.append("Cherry") added "Cherry" to the end of the list!');
+      } else if (method === 'extend') {
+        liveList = liveList.concat(["Grape", "Mango"]);
+        renderMethodLab('fruits.extend(["Grape", "Mango"]) added multiple items to the list!');
+      } else if (method === 'remove') {
+        const idx = liveList.indexOf("Banana");
+        if (idx !== -1) liveList.splice(idx, 1);
+        renderMethodLab('fruits.remove("Banana") searched and removed "Banana" from list!');
+      } else if (method === 'pop') {
+        const popped = liveList.pop();
+        renderMethodLab(`fruits.pop() removed the last item ("${popped}")!`);
+      } else if (method === 'concat') {
+        liveList = liveList.concat(["Kiwi"]);
+        renderMethodLab('fruits + ["Kiwi"] concatenated and joined ["Kiwi"]!');
+      } else if (method === 'len') {
+        renderMethodLab(`len(fruits) returns ${liveList.length} (total items in the list)!`);
+      }
+    }
+
+    function runSliceDemo() {
+      playSound('correct');
+      const start = parseInt(document.getElementById('slice-start').value) || 0;
+      const end = parseInt(document.getElementById('slice-end').value) || 2;
+      const sliced = liveList.slice(start, end);
+      document.getElementById('method-action-description').innerText = `fruits[${start}:${end}] sliced items from index ${start} up to ${end}: ${JSON.stringify(sliced)}`;
+    }
+
+    function resetMethodLab() {
+      playSound('pop');
+      liveList = ["Apple", "Banana"];
+      renderMethodLab('List reset back to initial state ["Apple", "Banana"]');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initDots();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+  </script>
+
+</body>
+</html>
