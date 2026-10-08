@@ -60,8 +60,8 @@
         }
         body {
             margin: 0;
-            padding: 0;
-            background-color: #0f081d;
+            padding: 16px;
+            background-color: #5E48C4;
             font-family: 'Poppins', sans-serif;
             color: #1A1A1A;
             overflow-x: hidden;
@@ -69,7 +69,15 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .stage-wrapper {
+            width: 100%;
+            max-width: 1280px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
         }
 
@@ -77,14 +85,15 @@
         .slide-stage {
             width: 1280px;
             height: 720px;
-            margin: 12px auto 0 auto;
+            margin: 0 auto;
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
             background-color: #ffffff;
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
             border: 1px solid #EAE7FE;
+            transform-origin: top center;
         }
 
         .slide-panel {
@@ -126,17 +135,18 @@
         /* Bottom Fixed Nav Bar */
         .nav-bar {
             width: 1280px;
-            margin: 12px auto 16px auto;
+            margin: 14px auto 16px auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 16px;
+            transform-origin: top center;
         }
 
         .nav-btn {
-            background: #2A1C68;
+            background: #4A3AAD;
             color: #FFD071;
-            border: 2px solid #5E48C4;
+            border: 2px solid #7B6ED4;
             padding: 12px 28px;
             border-radius: 16px;
             font-family: 'Poppins', sans-serif;
@@ -149,8 +159,9 @@
             transition: all 0.2s ease;
         }
         .nav-btn:hover:not(:disabled) {
-            background: #5E48C4;
-            color: #ffffff;
+            background: #FFD071;
+            color: #1A1A1A;
+            border-color: #FFD071;
             transform: scale(1.04);
         }
         .nav-btn:disabled {
@@ -158,11 +169,23 @@
             cursor: not-allowed;
         }
 
+        .nav-btn.finish-btn {
+            background: #FFD071;
+            color: #1A1A1A;
+            border-color: #FFD071;
+            animation: pulseFinish 1.6s infinite alternate;
+        }
+
+        @keyframes pulseFinish {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 208, 113, 0.6); }
+            100% { transform: scale(1.05); box-shadow: 0 0 18px 4px rgba(255, 208, 113, 0.5); }
+        }
+
         .dot-indicator {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #2A1C68;
+            background: rgba(255, 255, 255, 0.4);
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -284,7 +307,26 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-alphagen-purple">
+
+<div class="stage-wrapper">
+
+    <!-- Top Alphagen Branding Header Bar -->
+    <header class="w-full bg-alphagen-purpleDark px-4 py-3.5 flex flex-wrap items-center justify-between gap-3 text-white shadow-md rounded-2xl mb-4 border border-alphagen-purpleMid">
+        <div class="flex items-center gap-3">
+            <a href="#" class="bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack px-4 py-2 rounded-xl font-extrabold text-xs md:text-sm shadow-sm transition-all flex items-center gap-2">
+                <span class="tracking-wide">ALPHAGEN LEARNING</span>
+            </a>
+            <span class="font-extrabold text-base md:text-xl tracking-tight text-white">Python List: Interactive Exploration</span>
+        </div>
+        
+        <!-- Right Controls matching reference -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleAudio()" id="top-audio-btn" class="bg-alphagen-purple hover:bg-alphagen-purpleMid text-white p-2 rounded-lg transition-all" title="Toggle Sound">
+                <i class="fa-solid fa-volume-high text-base" id="sound-icon"></i>
+            </button>
+        </div>
+    </header>
 
     <!-- Main Presentation Stage Card -->
     <div class="slide-stage">
@@ -933,7 +975,10 @@ print(friends)</pre>
                 Next, we will learn how to combine <code class="font-mono text-alphagen-purple bg-alphagen-purpleGhost px-3 py-1 rounded-xl">for</code> loops with lists to process multiple items automatically!
             </p>
 
-           
+            <button onclick="triggerGrandConfetti()" class="bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack font-extrabold text-xl px-12 py-5 rounded-2xl shadow-xl shadow-alphagen-yellow/30 btn-interactive flex items-center gap-3">
+                <span>Celebrate Completion</span>
+                <span>🎉</span>
+            </button>
         </div>
 
     </div>
@@ -945,341 +990,415 @@ print(friends)</pre>
             <span>Previous</span>
         </button>
 
-        <span class="text-sm font-semibold text-white">
+        <span class="text-sm font-semibold text-white/90">
             Use Arrow Keys to navigate slides
         </span>
 
-        <button id="next-btn" class="nav-btn btn-interactive" onclick="nextSlide()">
-            <span>Next</span>
-            <i class="fa-solid fa-arrow-right"></i>
+        <button id="next-btn" class="nav-btn btn-interactive" onclick="handleNextOrFinish()">
+            <span id="next-btn-text">Next</span>
+            <i id="next-btn-icon" class="fa-solid fa-arrow-right"></i>
         </button>
     </div>
+</div>
 
-    <script>
-        let currentSlide = 1;
-        const totalSlides = 13;
-        let soundEnabled = true;
+<script>
+    let currentSlide = 1;
+    const totalSlides = 13;
+    let soundEnabled = true;
 
-        /* Web Audio Synthesizer */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    /* Web Audio Synthesizer */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function toggleAudio() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('audio-btn');
-            btn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-        }
+    function toggleAudio() {
+        soundEnabled = !soundEnabled;
+        const stageBtn = document.getElementById('audio-btn');
+        const topBtn = document.getElementById('top-audio-btn');
+        const iconHtml = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+        
+        if (stageBtn) stageBtn.innerHTML = iconHtml;
+        if (topBtn) topBtn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high text-base"></i>' : '<i class="fa-solid fa-volume-xmark text-base"></i>';
+    }
 
-        function playSound(type) {
-            if (!soundEnabled) return;
-            try {
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                if (type === 'correct') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                } else if (type === 'pop') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(360, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(720, audioCtx.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.08);
-                } else if (type === 'wrong') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.25);
-                }
-            } catch (e) {}
-        }
-
-        function initHeaderDots() {
-            const container = document.getElementById('header-dots-container');
-            container.innerHTML = '';
-            for (let i = 1; i <= totalSlides; i++) {
-                const dot = document.createElement('div');
-                dot.className = `dot-indicator ${i === 1 ? 'active' : ''}`;
-                dot.onclick = () => goToSlide(i);
-                container.appendChild(dot);
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
-        }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
-        function updateSlideDisplay() {
-            document.querySelectorAll('.slide-panel').forEach((panel, idx) => {
-                panel.classList.remove('active');
-                if (idx + 1 === currentSlide) {
-                    panel.classList.add('active');
-                }
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'pop') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(360, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(720, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+            }
+        } catch (e) {}
+    }
+
+    /* Confetti Animation Functions */
+    function triggerConfetti() {
+        playSound('correct');
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+    }
+
+    function triggerGrandConfetti() {
+        playSound('correct');
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 130,
+                spread: 90,
+                origin: { y: 0.5 },
+                colors: ['#5E48C4', '#FFD071', '#59E4FB', '#ED5661', '#ffffff']
             });
-
-            const dots = document.querySelectorAll('.dot-indicator');
-            dots.forEach((dot, idx) => {
-                if (idx + 1 === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-
-            document.getElementById('slide-counter-pill').innerText = `Slide ${currentSlide} / ${totalSlides}`;
-            document.getElementById('slide-dropdown').value = currentSlide;
-
-            document.getElementById('prev-btn').disabled = currentSlide === 1;
-            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 80,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1 }
+                });
+            }, 250);
         }
+    }
 
-        function goToSlide(slideNum) {
-            if (slideNum >= 1 && slideNum <= totalSlides) {
-                currentSlide = slideNum;
-                playSound('pop');
-                updateSlideDisplay();
+    /* Responsive stage scaler */
+    function fitStageToScreen() {
+        const stage = document.querySelector('.slide-stage');
+        const nav = document.querySelector('.nav-bar');
+        if (!stage) return;
+        const availableWidth = window.innerWidth - 32;
+        if (availableWidth < 1280) {
+            const scale = availableWidth / 1280;
+            stage.style.transform = `scale(${scale})`;
+            stage.style.marginBottom = `-${720 * (1 - scale)}px`;
+            if (nav) nav.style.transform = `scale(${scale})`;
+        } else {
+            stage.style.transform = 'none';
+            stage.style.marginBottom = '0px';
+            if (nav) nav.style.transform = 'none';
+        }
+    }
+
+    function initHeaderDots() {
+        const container = document.getElementById('header-dots-container');
+        container.innerHTML = '';
+        for (let i = 1; i <= totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = `dot-indicator ${i === 1 ? 'active' : ''}`;
+            dot.onclick = () => goToSlide(i);
+            container.appendChild(dot);
+        }
+    }
+
+    function updateSlideDisplay() {
+        document.querySelectorAll('.slide-panel').forEach((panel, idx) => {
+            panel.classList.remove('active');
+            if (idx + 1 === currentSlide) {
+                panel.classList.add('active');
             }
-        }
-
-        function nextSlide() {
-            if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
-        }
-
-        function prevSlide() {
-            if (currentSlide > 1) goToSlide(currentSlide - 1);
-        }
-
-        /* Slide 2 Shopping List Logic */
-        let shoppingItems = [];
-        function addShoppingItem(item) {
-            playSound('pop');
-            shoppingItems.push(item);
-            renderShoppingPaper();
-        }
-
-        function clearShoppingList() {
-            playSound('pop');
-            shoppingItems = [];
-            renderShoppingPaper();
-            document.getElementById('shop-reflection-banner').style.display = 'none';
-        }
-
-        function renderShoppingPaper() {
-            const container = document.getElementById('shopping-paper-container');
-            const badge = document.getElementById('shop-count-badge');
-            badge.innerText = `${shoppingItems.length} items`;
-
-            if (shoppingItems.length === 0) {
-                container.innerHTML = `<span class="text-alphagen-midGrey text-base italic">Your list is empty! Click items on the left to add...</span>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            shoppingItems.forEach((item, idx) => {
-                const chip = document.createElement('span');
-                chip.className = 'bg-alphagen-purple text-white font-bold px-3.5 py-1.5 rounded-xl text-sm flex items-center gap-2 shadow-xs';
-                chip.innerHTML = `${item} <button onclick="removeShoppingItem(${idx})" class="text-alphagen-yellow hover:text-white font-bold text-base ml-1">×</button>`;
-                container.appendChild(chip);
-            });
-        }
-
-        function removeShoppingItem(idx) {
-            playSound('pop');
-            shoppingItems.splice(idx, 1);
-            renderShoppingPaper();
-        }
-
-        function submitShoppingList() {
-            if (shoppingItems.length === 0) {
-                playSound('wrong');
-                return;
-            }
-            playSound('correct');
-            triggerConfetti();
-            document.getElementById('shop-reflection-banner').style.display = 'flex';
-        }
-
-        /* Slide 3 Code Builder Logic */
-        function buildFriendListCode() {
-            playSound('correct');
-            const f1 = document.getElementById('friend-1').value.trim() || "Alex";
-            const f2 = document.getElementById('friend-2').value.trim() || "Sam";
-            const f3 = document.getElementById('friend-3').value.trim() || "Maya";
-            const f4 = document.getElementById('friend-4').value.trim() || "Leo";
-            const f5 = document.getElementById('friend-5').value.trim() || "Zoe";
-
-            const codeStr = `friends = ["${f1}", "${f2}", "${f3}", "${f4}", "${f5}"]\nprint(friends)`;
-            const outputStr = `['${f1}', '${f2}', '${f3}', '${f4}', '${f5}']`;
-
-            document.getElementById('built-code-display').innerText = codeStr;
-            document.getElementById('built-terminal-output').innerText = outputStr;
-            triggerConfetti();
-        }
-
-        /* Checkbox Task Toggles */
-        function toggleTaskCheckbox(id) {
-            playSound('pop');
-            document.getElementById(id).classList.toggle('checked');
-        }
-
-        /* Slide 5 Drag and Drop Index Explorer */
-        let draggedText = '';
-        function handleIndexDragStart(e, text) {
-            draggedText = text;
-            e.dataTransfer.setData('text/plain', text);
-        }
-
-        function handleIndexDragOver(e) {
-            e.preventDefault();
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        function handleIndexDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        function handleIndexDrop(e, indexNum) {
-            e.preventDefault();
-            playSound('correct');
-            const slot = e.currentTarget;
-            slot.classList.remove('drag-over');
-            
-            const content = slot.querySelector('.slot-content');
-            const tag = slot.querySelector('.index-reveal-tag');
-
-            content.innerText = draggedText;
-            tag.style.display = 'inline-block';
-            tag.innerText = `Index [${indexNum}]`;
-            slot.style.borderColor = '#22c55e';
-            slot.style.background = '#f0fdf4';
-        }
-
-        /* Slide 6 Index Print Tester */
-        function testIndexPrint(index, val) {
-            playSound('pop');
-            document.getElementById('index-test-output').innerText = `"${val}"`;
-        }
-
-        /* Slide 7 & 12 Quiz Checkers */
-        function checkQuiz1NoConfetti(btn, isCorrect) {
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
-            if (isCorrect) {
-                playSound('correct');
-                btn.classList.add('selected-correct');
-            } else {
-                playSound('wrong');
-                btn.classList.add('selected-wrong');
-            }
-        }
-
-        function checkQuiz2NoConfetti(btn, isCorrect) {
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
-            if (isCorrect) {
-                playSound('correct');
-                btn.classList.add('selected-correct');
-            } else {
-                playSound('wrong');
-                btn.classList.add('selected-wrong');
-            }
-        }
-
-        function checkMethodQuizNoConfetti(btn, isCorrect) {
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
-            if (isCorrect) {
-                playSound('correct');
-                btn.classList.add('selected-correct');
-            } else {
-                playSound('wrong');
-                btn.classList.add('selected-wrong');
-            }
-        }
-
-        /* Slide 8 Number Demo */
-        function runNumDemo(code, result) {
-            playSound('correct');
-            document.getElementById('num-demo-output').innerText = result;
-        }
-
-        /* Slide 10 Method Lab */
-        let liveList = ["Apple", "Banana"];
-        function runMethodLab(action) {
-            playSound('pop');
-            const desc = document.getElementById('method-action-description');
-            
-            if (action === 'append') {
-                liveList.push("Cherry");
-                desc.innerText = 'append("Cherry") adds "Cherry" to the end of the list.';
-            } else if (action === 'extend') {
-                liveList = liveList.concat(["Grape", "Mango"]);
-                desc.innerText = 'extend(["Grape", "Mango"]) adds multiple items to the list.';
-            } else if (action === 'remove') {
-                const idx = liveList.indexOf("Banana");
-                if (idx > -1) liveList.splice(idx, 1);
-                desc.innerText = 'remove("Banana") searches and deletes "Banana" from the list.';
-            } else if (action === 'pop') {
-                const popped = liveList.pop();
-                desc.innerText = `pop() removes and returns the last item ("${popped || 'none'}").`;
-            } else if (action === 'concat') {
-                liveList = liveList.concat(["Kiwi"]);
-                desc.innerText = '+ ["Kiwi"] concatenates a new list containing "Kiwi".';
-            } else if (action === 'len') {
-                desc.innerText = `len(fruits) returns total length count: ${liveList.length}`;
-            }
-
-            renderLiveList();
-        }
-
-        function runSliceDemo() {
-            playSound('pop');
-            const start = parseInt(document.getElementById('slice-start').value) || 0;
-            const end = parseInt(document.getElementById('slice-end').value) || 2;
-            const sliced = liveList.slice(start, end);
-            const desc = document.getElementById('method-action-description');
-            desc.innerText = `fruits[${start}:${end}] slices items from index ${start} up to (not including) ${end}: [${sliced.map(x => `"${x}"`).join(', ')}]`;
-        }
-
-        function resetMethodLab() {
-            playSound('pop');
-            liveList = ["Apple", "Banana"];
-            renderLiveList();
-            document.getElementById('method-action-description').innerText = 'List reset to original elements!';
-        }
-
-        function renderLiveList() {
-            document.getElementById('live-list-display').innerText = JSON.stringify(liveList);
-        }
-
-        /* Confetti Animation */
-        function triggerConfetti() {
-            playSound('correct');
-            if (typeof confetti === 'function') {
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }
-        }
-
-        /* Keyboard Navigation Listener */
-        document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-                return;
-            }
-            if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
-            if (e.key === 'ArrowLeft') prevSlide();
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initHeaderDots();
+        const dots = document.querySelectorAll('.dot-indicator');
+        dots.forEach((dot, idx) => {
+            if (idx + 1 === currentSlide) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+
+        document.getElementById('slide-counter-pill').innerText = `Slide ${currentSlide} / ${totalSlides}`;
+        document.getElementById('slide-dropdown').value = currentSlide;
+        document.getElementById('prev-btn').disabled = currentSlide === 1;
+
+        const nextBtn = document.getElementById('next-btn');
+        const nextBtnText = document.getElementById('next-btn-text');
+        const nextBtnIcon = document.getElementById('next-btn-icon');
+
+        if (currentSlide === totalSlides) {
+            nextBtnText.innerText = 'Finish';
+            nextBtnIcon.className = 'fa-solid fa-flag-checkered';
+            nextBtn.classList.add('finish-btn');
+            nextBtn.disabled = false;
+        } else {
+            nextBtnText.innerText = 'Next';
+            nextBtnIcon.className = 'fa-solid fa-arrow-right';
+            nextBtn.classList.remove('finish-btn');
+            nextBtn.disabled = false;
+        }
+    }
+
+    function handleNextOrFinish() {
+        if (currentSlide === totalSlides) {
+            triggerGrandConfetti();
+        } else {
+            nextSlide();
+        }
+    }
+
+    function goToSlide(slideNum) {
+        if (slideNum >= 1 && slideNum <= totalSlides) {
+            currentSlide = slideNum;
+            playSound('pop');
             updateSlideDisplay();
+        }
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) goToSlide(currentSlide - 1);
+    }
+
+    /* Slide 2 Shopping List Logic */
+    let shoppingItems = [];
+    function addShoppingItem(item) {
+        playSound('pop');
+        shoppingItems.push(item);
+        renderShoppingPaper();
+    }
+
+    function clearShoppingList() {
+        playSound('pop');
+        shoppingItems = [];
+        renderShoppingPaper();
+        document.getElementById('shop-reflection-banner').style.display = 'none';
+    }
+
+    function renderShoppingPaper() {
+        const container = document.getElementById('shopping-paper-container');
+        const badge = document.getElementById('shop-count-badge');
+        badge.innerText = `${shoppingItems.length} items`;
+
+        if (shoppingItems.length === 0) {
+            container.innerHTML = `<span class="text-alphagen-midGrey text-base italic">Your list is empty! Click items on the left to add...</span>`;
+            return;
+        }
+
+        container.innerHTML = '';
+        shoppingItems.forEach((item, idx) => {
+            const chip = document.createElement('span');
+            chip.className = 'bg-alphagen-purple text-white font-bold px-3.5 py-1.5 rounded-xl text-sm flex items-center gap-2 shadow-xs';
+            chip.innerHTML = `${item} <button onclick="removeShoppingItem(${idx})" class="text-alphagen-yellow hover:text-white font-bold text-base ml-1">×</button>`;
+            container.appendChild(chip);
         });
-    </script>
+    }
+
+    function removeShoppingItem(idx) {
+        playSound('pop');
+        shoppingItems.splice(idx, 1);
+        renderShoppingPaper();
+    }
+
+    function submitShoppingList() {
+        if (shoppingItems.length === 0) {
+            playSound('wrong');
+            return;
+        }
+        playSound('correct');
+        triggerConfetti();
+        document.getElementById('shop-reflection-banner').style.display = 'flex';
+    }
+
+    /* Slide 3 Code Builder Logic */
+    function buildFriendListCode() {
+        playSound('correct');
+        const f1 = document.getElementById('friend-1').value.trim() || "Alex";
+        const f2 = document.getElementById('friend-2').value.trim() || "Sam";
+        const f3 = document.getElementById('friend-3').value.trim() || "Maya";
+        const f4 = document.getElementById('friend-4').value.trim() || "Leo";
+        const f5 = document.getElementById('friend-5').value.trim() || "Zoe";
+
+        const codeStr = `friends = ["${f1}", "${f2}", "${f3}", "${f4}", "${f5}"]\nprint(friends)`;
+        const outputStr = `['${f1}', '${f2}', '${f3}', '${f4}', '${f5}']`;
+
+        document.getElementById('built-code-display').innerText = codeStr;
+        document.getElementById('built-terminal-output').innerText = outputStr;
+        triggerConfetti();
+    }
+
+    /* Checkbox Task Toggles */
+    function toggleTaskCheckbox(id) {
+        playSound('pop');
+        document.getElementById(id).classList.toggle('checked');
+    }
+
+    /* Slide 5 Drag and Drop Index Explorer */
+    let draggedText = '';
+    function handleIndexDragStart(e, text) {
+        draggedText = text;
+        e.dataTransfer.setData('text/plain', text);
+    }
+
+    function handleIndexDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleIndexDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleIndexDrop(e, indexNum) {
+        e.preventDefault();
+        playSound('correct');
+        const slot = e.currentTarget;
+        slot.classList.remove('drag-over');
+        
+        const content = slot.querySelector('.slot-content');
+        const tag = slot.querySelector('.index-reveal-tag');
+
+        content.innerText = draggedText;
+        tag.style.display = 'inline-block';
+        tag.innerText = `Index [${indexNum}]`;
+        slot.style.borderColor = '#22c55e';
+        slot.style.background = '#f0fdf4';
+    }
+
+    /* Slide 6 Index Print Tester */
+    function testIndexPrint(index, val) {
+        playSound('pop');
+        document.getElementById('index-test-output').innerText = `"${val}"`;
+    }
+
+    /* Slide 7 & 12 Quiz Checkers */
+    function checkQuiz1NoConfetti(btn, isCorrect) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
+        if (isCorrect) {
+            playSound('correct');
+            btn.classList.add('selected-correct');
+        } else {
+            playSound('wrong');
+            btn.classList.add('selected-wrong');
+        }
+    }
+
+    function checkQuiz2NoConfetti(btn, isCorrect) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
+        if (isCorrect) {
+            playSound('correct');
+            btn.classList.add('selected-correct');
+        } else {
+            playSound('wrong');
+            btn.classList.add('selected-wrong');
+        }
+    }
+
+    function checkMethodQuizNoConfetti(btn, isCorrect) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-chip').forEach(b => b.classList.remove('selected-correct', 'selected-wrong'));
+        if (isCorrect) {
+            playSound('correct');
+            btn.classList.add('selected-correct');
+        } else {
+            playSound('wrong');
+            btn.classList.add('selected-wrong');
+        }
+    }
+
+    /* Slide 8 Number Demo */
+    function runNumDemo(code, result) {
+        playSound('correct');
+        document.getElementById('num-demo-output').innerText = result;
+    }
+
+    /* Slide 10 Method Lab */
+    let liveList = ["Apple", "Banana"];
+    function runMethodLab(action) {
+        playSound('pop');
+        const desc = document.getElementById('method-action-description');
+        
+        if (action === 'append') {
+            liveList.push("Cherry");
+            desc.innerText = 'append("Cherry") adds "Cherry" to the end of the list.';
+        } else if (action === 'extend') {
+            liveList = liveList.concat(["Grape", "Mango"]);
+            desc.innerText = 'extend(["Grape", "Mango"]) adds multiple items to the list.';
+        } else if (action === 'remove') {
+            const idx = liveList.indexOf("Banana");
+            if (idx > -1) liveList.splice(idx, 1);
+            desc.innerText = 'remove("Banana") searches and deletes "Banana" from the list.';
+        } else if (action === 'pop') {
+            const popped = liveList.pop();
+            desc.innerText = `pop() removes and returns the last item ("${popped || 'none'}").`;
+        } else if (action === 'concat') {
+            liveList = liveList.concat(["Kiwi"]);
+            desc.innerText = '+ ["Kiwi"] concatenates a new list containing "Kiwi".';
+        } else if (action === 'len') {
+            desc.innerText = `len(fruits) returns total length count: ${liveList.length}`;
+        }
+
+        renderLiveList();
+    }
+
+    function runSliceDemo() {
+        playSound('pop');
+        const start = parseInt(document.getElementById('slice-start').value) || 0;
+        const end = parseInt(document.getElementById('slice-end').value) || 2;
+        const sliced = liveList.slice(start, end);
+        const desc = document.getElementById('method-action-description');
+        desc.innerText = `fruits[${start}:${end}] slices items from index ${start} up to (not including) ${end}: [${sliced.map(x => `"${x}"`).join(', ')}]`;
+    }
+
+    function resetMethodLab() {
+        playSound('pop');
+        liveList = ["Apple", "Banana"];
+        renderLiveList();
+        document.getElementById('method-action-description').innerText = 'List reset to original elements!';
+    }
+
+    function renderLiveList() {
+        document.getElementById('live-list-display').innerText = JSON.stringify(liveList);
+    }
+
+    /* Keyboard Navigation Listener */
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        if (e.key === 'ArrowRight' || e.key === ' ') handleNextOrFinish();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    window.addEventListener('resize', fitStageToScreen);
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initHeaderDots();
+        updateSlideDisplay();
+        fitStageToScreen();
+    });
+</script>
 </body>
 </html>
